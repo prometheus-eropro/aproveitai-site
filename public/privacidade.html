@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidade</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1, h2 {
+      color: #444;
+    }
+    a {
+      color: #0066cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Política de Privacidade</h1>
+
+  <p>Esta Política de Privacidade descreve como coletamos, utilizamos, armazenamos e protegemos as informações pessoais dos usuários, em conformidade com a Lei Geral de Proteção de Dados Pessoais – LGPD (Lei nº 13.709/2018).</p>
+
+  <h2>1. Dados que coletamos</h2>
+  <ul>
+    <li>Nome completo</li>
+    <li>E-mail</li>
+    <li>Número de telefone</li>
+    <li>Histórico de uso e preferências no site</li>
+    <li>Informações técnicas de acesso (endereço IP, navegador, cookies)</li>
+  </ul>
+
+  <h2>2. Finalidade do tratamento</h2>
+  <p>Os dados coletados são utilizados para:</p>
+  <ul>
+    <li>Permitir o acesso e funcionamento do site</li>
+    <li>Personalizar e melhorar a experiência do usuário</li>
+    <li>Enviar comunicações relacionadas aos serviços contratados</li>
+    <li>Cumprir obrigações legais ou regulatórias</li>
+  </ul>
+
+  <h2>3. Compartilhamento de dados</h2>
+  <p>Não vendemos dados pessoais. O compartilhamento ocorre apenas com:</p>
+  <ul>
+    <li>Prestadores de serviços essenciais ao funcionamento do site</li>
+    <li>Autoridades públicas, quando exigido por lei</li>
+  </ul>
+
+  <h2>4. Armazenamento e segurança</h2>
+  <p>Seus dados são armazenados em servidores seguros, com medidas de proteção técnica e administrativa para prevenir acessos não autorizados.</p>
+
+  <h2>5. Direitos do titular</h2>
+  <p>Você pode, a qualquer momento:</p>
+  <ul>
+    <li>Solicitar acesso aos seus dados</li>
+    <li>Corrigir dados incompletos ou incorretos</li>
+    <li>Solicitar exclusão dos seus dados</li>
+    <li>Revogar o consentimento</li>
+    <li>Solicitar portabilidade para outro fornecedor</li>
+  </ul>
+  <p>Para exercer seus direitos, envie e-mail para: <a href="mailto:cartao.aproveitai@gmail.com">cartao.aproveitai@gmail.com</a></p>
+
+  <h2>6. Encarregado de Dados (DPO)</h2>
+  <p>Responsável: <strong>[Ergar Rocha/DPO]</strong><br>
+  E-mail: <a href="mailto:assistentes.prometheus@gmail.com">assistentes.prometheus@gmail.com</a></p>
+
+  <h2>7. Alterações nesta Política</h2>
+  <p>Podemos atualizar esta Política de Privacidade periodicamente. A data de última atualização estará sempre indicada abaixo.</p>
+
+  <p><strong>Última atualização:</strong> 12/08/2025</p>
+<!-- Banner de Cookies -->
+<div id="cookie-banner" style="
+    position:fixed;bottom:0;left:0;width:100%;
+    background:#232323;color:#fff;padding:12px;text-align:center;
+    font-size:14px;z-index:9999;display:none">
+  Usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa
+  <a href="privacidade.html" style="color:#3ee770;text-decoration:underline">Política de Privacidade</a>.
+  <button id="aceitar-cookies" style="
+      background:#3ee770;color:#000;font-weight:bold;
+      padding:6px 12px;border:none;border-radius:6px;margin-left:8px;cursor:pointer">
+    Aceitar
+  </button>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    if(!localStorage.getItem("cookiesAceitos")){
+      document.getElementById("cookie-banner").style.display = "block";
+    }
+    document.getElementById("aceitar-cookies").addEventListener("click", function(){
+      localStorage.setItem("cookiesAceitos", "true");
+      document.getElementById("cookie-banner").style.display = "none";
+    });
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+

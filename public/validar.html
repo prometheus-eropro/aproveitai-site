@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2b2b2b" />
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Validação do Cartão AproveitAI</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0a7f2e">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background: #f4f4f4;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      max-width: 500px;
+      margin: 2rem auto;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 10px #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>Validação do Cartão <strong>AproveitAI</strong></h3>
+    <p id="status">Aguarde, estamos verificando o status do cliente...</p>
+    <div id="resultado" style="display:none;">
+      <p><strong>Nome:</strong> <span id="nome"></span></p>
+      <p><strong>Status:</strong> <span id="ativo" class="badge"></span></p>
+      <p><strong>Código de Autorização:</strong> <span id="codigo"></span></p>
+    </div>
+    <p id="erro" style="color: red; display: none;">Erro ao validar o cartão.</p>
+  </div>
+
+  <script>
+    async function validarCliente(id) {
+      try {
+        const response = await fetch(`/api/consulta?tipo=clientesValidar&cpf=${id}`);
+        const data = await response.json();
+
+        document.getElementById("status").style.display = "none";
+
+        if (!data || !data.valido) {
+          document.getElementById("erro").style.display = "block";
+          return;
+        }
+
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("nome").innerText = data.dados.nome || "Desconhecido";
+        document.getElementById("codigo").innerText = data.dados.codigo || "-";
+        const statusEl = document.getElementById("ativo");
+        statusEl.innerText = data.dados.ativo ? "Ativo" : "Inativo";
+        statusEl.className = data.dados.ativo ? "badge bg-success" : "badge bg-danger";
+
+      } catch (err) {
+        console.error("Erro:", err);
+        document.getElementById("status").style.display = "none";
+        document.getElementById("erro").style.display = "block";
+      }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (id) validarCliente(id);
+    else document.getElementById("erro").innerText = "ID inválido.";
+  </script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+      .then(() => console.log("Service Worker registrado com sucesso"))
+      .catch(error => console.error("Erro ao registrar o Service Worker:", error));
+  }
+</script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get("id");
+
+  if (id) {
+    document.getElementById("cpfInput").value = id;
+    document.getElementById("consultarBtn").click();
+  }
+</script>
+
+</body>
+</html>

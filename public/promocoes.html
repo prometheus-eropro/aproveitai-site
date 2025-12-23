@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="/manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Promoções | Cartão AproveitAI</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+
+
+  #voltar-fixo {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: var(--verde);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    z-index: 999;
+  }
+
+body, html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.wrap {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+    :root {
+      --verde: #0a7f2e;
+      --verde-esc: #065e1f;
+      --bg1: #bdeeff;
+      --bg2: #81d4fa;
+      --card: #fff;
+      --ink: #232630;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--ink);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      padding: 10px 20px;
+    }
+    header img { height: 80px; }
+    h1 {
+      color: var(--verde);
+      font-size: 28px;
+      margin: 0;
+    }
+    .container {
+      padding: 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin: 0 0 5px;
+      color: var(--verde-esc);
+    }
+    .info {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+<!-- Cabeçalho padrão -->
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  header img {
+    height: 60px;
+  }
+
+  h1 {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .card {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  .info {
+    font-size: 13px;
+  }
+}
+body, .card, .info {
+  font-size: 17px;
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cards-container .card {
+  width: 45%;
+  min-width: 300px;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo-prometheus.png" alt="Logo Empresa">
+    <h1>Cartão AproveitAI</h1>
+    <img src="logo-aproveitai.png" alt="Logo AproveitAI">
+  </header>
+
+  <div class="container">
+    <h2 style="text-align:center;">Promoções Ativas</h2>
+    <div id="promocoes"></div>
+    <div id="erro" style="color:red;"></div>
+  </div>
+
+<script>
+const hoje = new Date().toISOString().split('T')[0];
+const container = document.getElementById('promocoes');
+
+fetch('/api/gateway?tabela=promocoes')
+  .then(res => res.json())
+  .then(data => {
+    const registros = data.records || [];
+
+    const gerais = [];
+    const exclusivos = [];
+
+    registros.forEach(r => {
+      const f = r.fields;
+      const grupo = (f.grupo || 'todos').toLowerCase();
+      const dataInicio = f.dataInicio || f.dataCadastro;
+      const dataFim = f.dataFim;
+
+      const valido = (!dataInicio || dataInicio <= hoje) && (!dataFim || dataFim >= hoje);
+
+      if (valido) {
+        if (grupo === 'todos') gerais.push(f);
+        else exclusivos.push(f);
+      }
+    });
+
+    function criarCard(f, grupoExclusivo = null) {
+      let validade = '';
+      if (f.dataInicio && f.dataFim) validade = `de ${formatarData(f.dataInicio)} até ${formatarData(f.dataFim)}`;
+      else if (f.dataFim) validade = `até ${formatarData(f.dataFim)}`;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      card.innerHTML = `
+        <h3>${f.titulo || 'Sem título'} ${grupoExclusivo ? `<span style="color:red; font-size: 14px;">(Exclusivo para: ${grupoExclusivo})</span>` : ''}</h3>
+        <div class="info"><strong>Descrição:</strong> ${f.descricao || '-'}</div>
+        <div class="info"><strong>Parceiro:</strong> ${f.parceiro || '-'}</div>
+        <div class="info"><strong>Validade:</strong> ${validade || '-'}</div>
+        ${f.instagram ? `<div class="info"><a href="https://instagram.com/${formatarInsta(f.instagram)}" target="_blank">📸 Instagram do parceiro</a></div>` : ''}
+        ${f.whatsapp ? `<div class="info"><a href="https://wa.me/${formatarZap(f.whatsapp)}" target="_blank">📲 WhatsApp do parceiro</a></div>` : ''}
+      `;
+
+      return card;
+    }
+
+    if (gerais.length) {
+      const tituloGeral = document.createElement('h2');
+      tituloGeral.innerText = "Promoções disponíveis para todos";
+      container.appendChild(tituloGeral);
+      gerais.forEach(f => container.appendChild(criarCard(f)));
+    }
+
+    if (exclusivos.length) {
+      const tituloExclusivo = document.createElement('h2');
+      tituloExclusivo.innerText = "Promoções exclusivas por grupo";
+      container.appendChild(tituloExclusivo);
+      exclusivos.forEach(f => {
+        const grupo = f.grupo || "Desconhecido";
+        container.appendChild(criarCard(f, grupo));
+      });
+    }
+
+    if (!gerais.length && !exclusivos.length) {
+      container.innerHTML = "<p>Nenhuma promoção ativa no momento.</p>";
+    }
+  })
+  .catch(error => {
+    console.error('Erro ao carregar promoções:', error);
+    document.getElementById('erro').innerText = "Erro ao buscar promoções.";
+  });
+
+function formatarData(dataStr) {
+  const [ano, mes, dia] = dataStr.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+function formatarZap(zap) {
+  return zap.replace(/\D/g, '');
+}
+function formatarInsta(insta) {
+  return insta.replace(/^@/, '');
+}
+</script>
+
+  <button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', function () {
+navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+console.log('ServiceWorker registrado com sucesso:', registration.scope);
+}, function (err) {
+console.log('Falha ao registrar ServiceWorker:', err);
+});
+});
+}
+</script>
+</body>
+</html>

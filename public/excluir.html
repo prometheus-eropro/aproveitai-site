@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitação de Exclusão de Dados Pessoais</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 {
+      color: #444;
+    }
+    a {
+      color: #0066cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Solicitação de Exclusão de Dados Pessoais</h1>
+
+  <p>Conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 – LGPD), você pode solicitar a exclusão definitiva dos seus dados pessoais armazenados por nossa empresa.</p>
+
+  <h2>Como solicitar</h2>
+  <p>Envie um e-mail para <a href="mailto:cartao.aproveitai@gmail.com">cartao.aproveitai@gmail.com</a> com o assunto <strong>"Excluir meus dados"</strong>. No corpo da mensagem, informe:</p>
+  <ul>
+    <li>Seu nome completo</li>
+    <li>O e-mail ou número de celular cadastrado</li>
+    <li>Um documento que comprove sua identidade (opcional, mas pode ser solicitado para segurança)</li>
+  </ul>
+
+  <h2>O que será excluído</h2>
+  <p>Todos os dados pessoais vinculados à sua conta, incluindo informações de cadastro, histórico de utilização e dados de contato. Alguns registros poderão ser mantidos pelo prazo legal necessário para cumprimento de obrigações fiscais ou regulatórias.</p>
+
+  <h2>Prazo de atendimento</h2>
+  <p>A exclusão será processada em até <strong>15 dias</strong> contados a partir do recebimento da solicitação, respeitando os prazos previstos na legislação vigente.</p>
+
+  <h2>Encarregado de Dados (DPO)</h2>
+  <p>Responsável pelo tratamento dos dados: <strong>[Edgar Rocha/DPO]</strong>  
+  E-mail: <a href="mailto:assistentes.prometheus@gmail.com">assistentes.prometheus@gmail.com</a></p>
+
+  <h2>Importante</h2>
+  <p>Ao solicitar a exclusão, você compreende que alguns serviços ou benefícios vinculados à sua conta poderão deixar de funcionar permanentemente.</p>
+<!-- Banner de Cookies -->
+<div id="cookie-banner" style="
+    position:fixed;bottom:0;left:0;width:100%;
+    background:#232323;color:#fff;padding:12px;text-align:center;
+    font-size:14px;z-index:9999;display:none">
+  Usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa
+  <a href="privacidade.html" style="color:#3ee770;text-decoration:underline">Política de Privacidade</a>.
+  <button id="aceitar-cookies" style="
+      background:#3ee770;color:#000;font-weight:bold;
+      padding:6px 12px;border:none;border-radius:6px;margin-left:8px;cursor:pointer">
+    Aceitar
+  </button>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    if(!localStorage.getItem("cookiesAceitos")){
+      document.getElementById("cookie-banner").style.display = "block";
+    }
+    document.getElementById("aceitar-cookies").addEventListener("click", function(){
+      localStorage.setItem("cookiesAceitos", "true");
+      document.getElementById("cookie-banner").style.display = "none";
+    });
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+

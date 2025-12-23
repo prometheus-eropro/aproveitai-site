@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="/manifest.json">
+  <meta charset="UTF-8">
+  <title>Painel do Parceiro • AproveitAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: linear-gradient(135deg, #bdeeff, #81d4fa);
+      color: #232630;
+    }
+    .brandline {
+      display: grid;
+      grid-template-columns: 140px 1fr 140px;
+      gap: 12px;
+      align-items: center;
+      justify-items: center;
+      margin: 18px auto 0;
+      max-width: 600px;
+    }
+    .brandline img { height: 100px; object-fit: contain; }
+    .pill {
+      background: #e9fff1;
+      border: 1px solid #b7efc2;
+      color: #0a4c1a;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 900;
+      font-size: 1.6rem;
+      text-align: center;
+    }
+    .wrap { max-width: 600px; margin: auto; padding: 16px; }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 22px #0001;
+      padding: 20px;
+      margin: 18px auto;
+      max-width: 900px;
+    }
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .action-buttons button, .action-buttons a {
+      margin: 6px;
+      padding: 12px 18px;
+      font-weight: 700;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .verde { background-color: #0a7f2e; }
+    .azul { background-color: #3e6bee; }
+    .vermelho { background-color: #d10000; }
+    .amarelo { background-color: #f4b400; color: #000; }
+    .muted { opacity: .9; font-weight: 400; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    #resultadoValidacao {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .validado { background: #e6ffed; border: 2px solid #0a7f2e; }
+    .invalido { background: #ffe6e6; border: 2px solid #d10000; }
+    .consulta-card {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+.statusAtivo {
+  background: #e6ffed;
+  border-left: 6px solid #0a7f2e;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+.statusInativo {
+  background: #ffe6e6;
+  border-left: 6px solid #d10000;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
+    #voltar-fixo {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #0a7f2e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+      z-index: 999;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="brandline">
+    <img src="logo-prometheus.png" alt="Prometheus">
+    <div class="pill">Cartão AproveitAI</div>
+    <img src="logo-aproveitai.png" alt="AproveitAI">
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h2 id="boasVindasTitulo">Bem-vindo, <span id="nomeParceiro">PARCEIRO</span>!</h2>
+
+
+      <p class="muted">Obrigado por ser nosso PARCEIRO, você está conectado ao seu painel.</p>
+
+      <h3>Validação de Cliente</h3>
+      <p class="muted">Insira o CPF ou ID Público do cliente para validar:</p>
+      <input type="text" id="cpfOuId" placeholder="Digite o CPF ou ID do cliente">
+
+      <div id="resultadoValidacao"></div>
+
+      <div class="action-buttons">
+      <button class="verde" onclick="consultarCliente()">🔍 Validar Cliente</button>
+        <button class="azul" onclick="carregarConsultasRecentes()">📘 Consultas Recentes</button>
+<a class="amarelo" href="https://wa.me/5528999692303?text=Tenho interesse em criar uma nova promoção personalizada." target="_blank">🎉 Criar Promoção</a>
+        <button class="vermelho" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Consultas Recentes (últimos 5 dias)</h3>
+      <button onclick="carregarConsultasRecentes()">🔄 Atualizar</button>
+      <div id="consultasRecentesBox" style="margin-top:15px;"></div>
+    </div>
+
+    <div class="card">
+      <h3>Enviar Sugestão</h3>
+      <textarea id="sugestao" placeholder="Digite sua sugestão..."></textarea>
+      <button class="azul" onclick="enviarSugestao()">📩 Enviar</button>
+    </div>
+  </div>
+  <button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+
+<script>
+  // Recuperar parceiro do localStorage
+  const parceiroObj = JSON.parse(localStorage.getItem("parceiro"));
+  const parceiroCNPJ = parceiroObj?.cnpj || "NAO_INFORMADO";
+  const parceiroNome = parceiroObj?.nome || "NAO_INFORMADO";
+
+  console.log("✅ Parceiro carregado:", parceiroObj);
+
+  // Log extra de conferência
+  console.log("🤖 Parceiro carregado no painel:", {
+    parceiroCNPJ,
+    parceiroNome
+  });
+
+  // Função para gerar código de autorização
+  function gerarCodigoAutorizacao() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let codigo = 'ERO';
+    for (let i = 0; i < 5; i++) {
+      codigo += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return codigo;
+  }
+
+  // Função para consultar cliente
+async function consultarCliente() {
+  const cpf = document.getElementById("cpfOuId").value;
+  const resultado = document.getElementById("resultadoValidacao");
+  resultado.innerHTML = "Validando...";
+
+  try {
+    let parceiro = JSON.parse(localStorage.getItem("parceiro"));
+    if (!parceiro) {
+      const cnpj = sessionStorage.getItem("cnpjParceiro");
+      const nome = sessionStorage.getItem("nomeParceiro");
+      if (cnpj && nome) {
+        parceiro = { cnpj, nome };
+      }
+    }
+
+    const cnpj = parceiro?.cnpj || localStorage.getItem("parceiroCNPJ") || "NAO_INFORMADO";
+    const nome = parceiro?.nome || localStorage.getItem("parceiroNome") || "NAO_INFORMADO";
+
+    console.log("Consulta enviada com:", { cpf, cnpj, nome });
+
+    // 🚀 Envio em POST para salvar log completo
+    const resposta = await fetch("/api/consulta", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tipo: "clientesValidar",
+        cpf,
+        cnpj,
+        nomeParceiro: nome,
+        origemConsulta: "paineldoparceiro",
+        dataHora: new Date().toISOString()
+      })
+    });
+
+    const dados = await resposta.json();
+    if (!resposta.ok) throw new Error(dados.erro || "Erro desconhecido");
+
+    const c = dados.dados;
+
+    const corFundo = c.ativo ? "#e6ffed" : "#ffe6e6";
+    const corBorda = c.ativo ? "#0a7f2e" : "#d10000";
+    const corTexto = c.ativo ? "green" : "red";
+
+    resultado.innerHTML = `
+      <div style="
+        background-color: ${corFundo};
+        border: 2px solid ${corBorda};
+        padding: 20px;
+        border-radius: 8px;
+        font-family: sans-serif;
+      ">
+        <p><strong>Cliente:</strong> ${c.nome}</p>
+        <p><strong>ID Público:</strong> ${c.idPublico}</p>
+        <p><strong>CPF:</strong> ${c.cpf || "NAO_INFORMADO"}</p>
+        <p><strong>Grupo:</strong> ${c.grupo}</p>
+        <p><strong>Status:</strong> <span style="color: ${corTexto}">${c.ativo ? "Ativo" : "Inativo"}</span></p>
+        <p><strong>Cliente desde:</strong> ${c.clienteDesde || "Desconhecido"}</p>
+        <p><strong>Código de Autorização:</strong> ${c.codigo}</p>
+      </div>
+    `;
+
+  } catch (err) {
+    resultado.innerHTML = `<span style="color:red">❌ Erro ao validar cliente.</span>`;
+    console.error(err);
+  }
+}
+  // Função para carregar consultas recentes
+async function carregarConsultasRecentes() {
+  const box = document.getElementById("consultasRecentesBox");
+
+  try {
+    const parceiro = JSON.parse(localStorage.getItem("parceiro"));
+    if (!parceiro || !parceiro.cnpj) {
+      box.innerHTML = `<span style="color:red">❌ Parceiro não logado.</span>`;
+      return;
+    }
+
+    const res = await fetch(`/api/consulta?tipo=logs&cnpj=${parceiro.cnpj}`);
+    const { consultas } = await res.json();
+
+    if (!consultas || consultas.length === 0) {
+      box.innerHTML = `<div class="muted">Nenhuma consulta encontrada.</div>`;
+      return;
+    }
+
+    box.innerHTML = consultas.map(c => {
+      const dataFmt = c.dataHora && c.dataHora !== "-"
+        ? new Date(c.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
+        : "-";
+
+      return `
+        <div class="consulta-card">
+          <strong>${c.nomeCliente || "Desconhecido"}</strong><br>
+          Código: ${c.codigoAutorizacao || "-"}<br>
+          ID: ${c.idPublico || "-"}<br>
+          Grupo: ${c.grupo || "-"} — Status: ${c.status || "-"}<br>
+          Desde: ${c.clienteDesde || "-"}<br>
+          Parceiro: ${c.nomeParceiro || "NAO_INFORMADO"} (${c.cnpjParceiro || "NAO_INFORMADO"})<br>
+          Data: ${dataFmt}
+        </div>`;
+    }).join('');
+  } catch (err) {
+    box.innerHTML = `<span style="color:red">❌ Erro ao carregar consultas.</span>`;
+    console.error(err);
+  }
+}
+
+  // Função para enviar sugestão
+  function enviarSugestao() {
+    const texto = document.getElementById("sugestao").value.trim();
+    if (!texto) {
+      alert("Digite sua sugestão antes de enviar.");
+      return;
+    }
+    const numero = "5528999692303";
+    const urlZap = `https://wa.me/${numero}?text=${encodeURIComponent("Sugestão do parceiro: " + texto)}`;
+    window.open(urlZap, "_blank");
+    document.getElementById("sugestao").value = "";
+  }
+
+  // Função para logout
+  function logout() {
+    sessionStorage.clear();
+    window.location.href = "areadoparceiro.html";
+  }
+if (document.getElementById("nomeParceiro") && parceiroNome) {
+  document.getElementById("nomeParceiro").textContent = parceiroNome;
+}
+
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', function () {
+navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+console.log('ServiceWorker registrado com sucesso:', registration.scope);
+}, function (err) {
+console.log('Falha ao registrar ServiceWorker:', err);
+});
+});
+}
+</script>
+</body>
+
+</html>

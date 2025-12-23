@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="/manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Benefícios | Cartão AproveitAI</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+
+#voltar-fixo {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #0a7f2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  z-index: 999;
+}
+
+
+body, html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.wrap {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b3e5fc;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: white;
+        }
+        header img {
+            height: 80px;
+        }
+        header h1 {
+            font-size: 28px;
+            color: #1B5E20;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: green;
+        }
+        .card {
+            background-color: #f1fdf1;
+            border-left: 6px solid green;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        .card h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            text-transform: capitalize;
+        }
+        .card strong {
+            display: inline-block;
+            width: 90px;
+        }
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cards-container .card {
+  width: 45%;
+  min-width: 300px;
+}
+
+    </style>
+</head>
+<body>
+<header>
+    <img src="logo-prometheus.png" alt="Logo Prometheus">
+    <h1>Cartão AproveitAI</h1>
+    <img src="logo-aproveitai.png" alt="Logo AproveitAI">
+</header>
+
+<div class="container">
+    <h2>Benefícios Ativos</h2>
+    <div id="beneficios"></div>
+</div>
+
+<script>
+const hoje = new Date().toISOString().split('T')[0];
+
+fetch('/api/gateway?tabela=beneficios')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('beneficios');
+    const registros = data.records || [];
+
+// pega os ativos
+const ativos = registros.filter(r => {
+  const f = r.fields;
+  const dataFim = f.dataFim;
+  const ativo = !f.ativo || f.ativo === true || String(f.ativo).toLowerCase() === "sim";
+  const valido = !dataFim || dataFim >= hoje;
+  return ativo && valido;
+});
+
+// separa os que são para todos
+const beneficiosTodos = ativos.filter(r => {
+  const grupo = (r.fields.grupo || '').trim().toLowerCase();
+  return grupo === '' || grupo === 'todos';
+});
+
+// separa os exclusivos de grupo
+const beneficiosGrupo = ativos.filter(r => {
+  const grupo = (r.fields.grupo || '').trim().toLowerCase();
+  return grupo && grupo !== 'todos';
+});
+
+if (beneficiosTodos.length > 0) {
+  const titulo = document.createElement('h2');
+  titulo.innerText = "Benefícios disponíveis para todos";
+  container.appendChild(titulo);
+
+  beneficiosTodos.forEach(renderBeneficio);
+}
+
+if (beneficiosGrupo.length > 0) {
+  const titulo = document.createElement('h2');
+  titulo.innerText = "Benefícios exclusivos por grupo";
+  container.appendChild(titulo);
+
+  beneficiosGrupo.forEach(registro => renderBeneficio(registro, true));
+}
+
+function renderBeneficio(registro, exclusivo = false) {
+  const dados = registro.fields;
+  const grupo = dados.grupo || '';
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  let validade = '';
+  if (dados.dataInicio && dados.dataFim) {
+    validade = `de ${formatarData(dados.dataInicio)} até ${formatarData(dados.dataFim)}`;
+  } else if (dados.dataFim) {
+    validade = `até ${formatarData(dados.dataFim)}`;
+  }
+
+  card.innerHTML = `
+    <h3>${dados.titulo || 'Sem título'}
+  ${(exclusivo && grupo) ? `<span style="color:red; font-size: 14px;">(Exclusivo para: ${grupo.toUpperCase()})</span>` : ''}
+</h3>
+
+    <div class="info"><strong>Descrição:</strong> ${dados.descricao || '-'}</div>
+    <div class="info"><strong>Parceiro:</strong> ${dados.parceiro || '-'}</div>
+    <div class="info"><strong>Validade:</strong> ${validade || '-'}</div>
+    ${dados.instagram ? `<div class="info"><a href="https://instagram.com/${formatarInsta(dados.instagram)}" target="_blank">📸 Instagram do parceiro</a></div>` : ''}
+    ${dados.whatsapp ? `<div class="info"><a href="https://wa.me/${formatarZap(dados.whatsapp)}" target="_blank">📲 WhatsApp do parceiro</a></div>` : ''}
+  `;
+
+  container.appendChild(card);
+}
+
+    function formatarData(dataStr) {
+      const [ano, mes, dia] = dataStr.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+    function formatarZap(zap) {
+      return zap.replace(/\D/g, '');
+    }
+    function formatarInsta(insta) {
+      return insta.replace(/^@/, '');
+    }
+  })
+  .catch(error => {
+    console.error('Erro ao carregar benefícios:', error);
+    const container = document.getElementById('beneficios');
+    if (container) container.innerHTML = "<p>Erro ao carregar benefícios.</p>";
+  });
+</script>
+  <button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', function () {
+navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+console.log('ServiceWorker registrado com sucesso:', registration.scope);
+}, function (err) {
+console.log('Falha ao registrar ServiceWorker:', err);
+});
+});
+}
+</script>
+</body>
+</html>

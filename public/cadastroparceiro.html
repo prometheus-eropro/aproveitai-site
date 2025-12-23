@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<link rel="manifest" href="/manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro de Parceiro • AproveitAI</title>
+  <style>
+body, html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.wrap {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+    :root {
+      --verde: #0a7f2e;
+      --verde-esc: #065e1f;
+      --bg1: #bdeeff;
+      --bg2: #81d4fa;
+      --card: #fff;
+      --ink: #232630;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--ink);
+    }
+    .brandline {
+      display: grid;
+      grid-template-columns:140px 1fr 140px;
+      gap: 12px;
+      align-items: center;
+      justify-items: center;
+      margin: 18px auto 0;
+      max-width: 600px;
+    }
+    .brandline img { height: 100px; object-fit: contain; }
+    .pill {
+      background: #e9fff1;
+      border: 1px solid #b7efc2;
+      color: #0a4c1a;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 900;
+      font-size: 1.6rem;
+      text-align: center;
+    }
+    .title {
+      text-align: center;
+      font-weight: 900;
+      color: #0a4c1a;
+      font-size: 1.8rem;
+      margin: 12px 0 20px;
+    }
+    .form-wrapper {
+      background: var(--card);
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px #0002;
+    }
+    h1 { color: var(--verde); text-align: center; }
+    label { display: block; margin-top: 12px; font-weight: 600; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 18px;
+      padding: 12px;
+      width: 100%;
+      background: var(--verde);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover { background: var(--verde-esc); }
+    footer {
+      background-color: #232323;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+#voltar-fixo {
+  position: fixed;      /* fixa na tela */
+  bottom: 15px;         /* distância do rodapé */
+  left: 15px;           /* distância da lateral */
+  padding: 10px 20px;    /* tamanho compacto */
+  font-size: 13px;      /* texto menor */
+  background-color: #0a7f2e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 999;
+  width: auto !important;   /* força a largura mínima */
+  display: inline-block;    /* impede de ocupar linha toda */
+}
+#voltar-fixo {
+  width: auto !important;
+  display: inline-block;
+}
+  </style>
+<script>
+  function aplicarMascaraCNPJ(input) {
+    input.value = input.value
+      .replace(/\D/g, '')
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  }
+
+  function aplicarMascaraCelular(input) {
+    input.value = input.value
+      .replace(/\D/g, '')
+      .replace(/^(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2');
+  }
+</script>
+
+</head>
+<body>
+  <div class="brandline">
+    <img src="logo-prometheus.png" alt="Logo Prometheus">
+    <div class="pill">Cartão AproveitAI</div>
+    <img src="logo-aproveitai.png" alt="Logo AproveitAI">
+  </div>
+
+  <div class="title">Cadastro de Parceiro</div>
+
+  <div class="form-wrapper">
+    <h1>Seja nosso parceiro</h1>
+    <form id="form-parceiro">
+      <label for="nome">Nome Fantasia</label>
+      <input type="text" id="nome" required>
+
+      <label for="cnpj">CNPJ</label>
+      <input type="text" id="cnpj" oninput="aplicarMascaraCNPJ(this)" maxlength="18">
+
+      <label for="ramo">Ramo de Atividade</label>
+      <input type="text" id="ramo">
+
+      <label for="cidade">Cidade/UF</label>
+      <input type="text" id="cidade">
+
+      <label for="contato">WhatsApp ou Telefone</label>
+     <input type="text" id="contato" oninput="aplicarMascaraCelular(this)" maxlength="15">
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" required>
+
+      <label for="instagram">Instagram</label>
+      <input type="text" id="instagram">
+
+      <label for="site">Site</label>
+      <input type="text" id="site" placeholder="www.seusite.com.br">
+
+      <label for="beneficio">Benefício Oferecido</label>
+      <textarea id="beneficio" rows="3"></textarea>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
+
+  <div id="cookie-banner" style="background: #eee; padding: 10px; text-align:center;">
+    Este site utiliza cookies para melhorar sua experiência.
+    <a href="privacidade.html" style="color:#1a73e8;">Saiba mais</a>
+    <button onclick="aceitarCookies()">Aceitar</button>
+  </div>
+
+<script>
+
+  const table = 'parceiros';
+
+  document.getElementById('form-parceiro').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const form = e.target;
+
+    let site = form.site.value.trim();
+    if (site && !site.startsWith("http://") && !site.startsWith("https://")) {
+      site = "https://" + site;
+    }
+
+    const data = {
+      nomeFantasia: form['nome'].value,
+      cnpj: form['cnpj'].value,
+      cidade: form['cidade'].value,
+      ramo: form['ramo'].value,
+      beneficios: form['beneficio'].value,
+      whatsapp: form['contato'].value,
+      instagram: form['instagram'].value,
+      site: site,
+      email: form['email'].value,
+      ativo: "NAO",
+      dataCadastro: new Date().toISOString().split("T")[0]
+    };
+const cnpjLimpo = data.cnpj.replace(/\D/g, '');
+if (cnpjLimpo.length !== 14) {
+  alert("CNPJ inválido.");
+  return;
+}
+
+if (data.whatsapp.length < 8) {
+  alert("Número de contato inválido.");
+  return;
+}
+
+    try {
+const resp = await fetch('/api/parceiros', {
+
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
+});
+
+if (!resp.ok) {
+  alert("Erro ao cadastrar parceiro.");
+  return;
+}
+
+
+
+// Após confirmação do cadastro
+      const nome = form['nome'].value;
+      const cnpj = form['cnpj'].value;
+      const numeroParceiro = "55" + form['contato'].value.replace(/\D/g, '');
+      const zapAdmin = "5528999692303";
+
+      // Mensagem para o parceiro
+      const msgParceiro = `Olá ${nome}, seu cadastro foi recebido com sucesso e será avaliado em breve.`;
+
+      // Mensagem para o admin
+      const msgAdmin = `Novo cadastro de parceiro:
+
+Nome: ${nome}
+CNPJ: ${cnpj}
+
+Deseja liberar este parceiro?`;
+
+      // Envia zap para o admin
+      window.open(`https://wa.me/${zapAdmin}?text=${encodeURIComponent(msgAdmin)}`, '_blank');
+
+      // Redireciona para o zap do parceiro
+      alert("Cadastro enviado com sucesso! Você será redirecionado para o WhatsApp.");
+      const linkZap = `https://wa.me/${numeroParceiro}?text=${encodeURIComponent(msgParceiro)}`;
+      window.location.href = linkZap;
+
+      form.reset();
+    } catch (error) {
+      console.error("Erro detalhado:", error.response?.data || error);
+      alert('Erro ao enviar dados. Verifique a conexão ou os dados preenchidos.');
+    }
+  });
+
+  function aceitarCookies() {
+    const aviso = document.getElementById('cookie-banner');
+    if (aviso) aviso.style.display = 'none';
+    document.cookie = "cookiesAceitos=true; max-age=31536000; path=/";
+  }
+
+  window.addEventListener('load', () => {
+    const aviso = document.getElementById('cookie-banner');
+    if (document.cookie.includes('cookiesAceitos=true') && aviso) {
+      aviso.style.display = 'none';
+    }
+  });
+</script>
+
+<button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', function () {
+navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+console.log('ServiceWorker registrado com sucesso:', registration.scope);
+}, function (err) {
+console.log('Falha ao registrar ServiceWorker:', err);
+});
+});
+}
+</script>
+</body>
+</html>

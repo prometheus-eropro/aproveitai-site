@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cartão AproveitAI – os benefícios</title>
+  <meta name="theme-color" content="#0a7f2e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="logo-192.png">
+  <link rel="apple-touch-icon" href="logo-aproveitai.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+    :root {
+      --verde: #0a7f2e;
+      --verde-esc: #065e1f;
+      --cinza: #f3f4f6;
+      --cinza2: #e5e7eb;
+      --azul: #3e6bee;
+      --bg1: #bdeeff;
+      --bg2: #81d4fa;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topo {
+      background: #fff;
+      text-align: center;
+      padding: 20px 10px;
+      box-shadow: 0 2px 6px #0002;
+    }
+
+    .logo-line {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .logo-line img {
+      max-height: 200px;
+      max-width: 45%;
+    }
+
+    .brand-name {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: var(--verde);
+      background: #eaffeb;
+      padding: 8px 20px;
+      border-radius: 20px;
+    }
+
+    .slogan {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--verde-esc);
+      margin-top: 6px;
+    }
+
+    .welcome-box {
+      background: #ffffffcc;
+      border-radius: 16px;
+      margin: 20px auto;
+      max-width: 800px;
+      padding: 16px;
+      box-shadow: 0 2px 10px #0002;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .cta-row a {
+      text-decoration: none;
+      background: var(--verde);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+@media (max-width: 768px) {
+  .filters {
+    display: flex !important;
+    flex-direction: column;
+  }
+}
+.filters {
+  background: #fff;
+  border: 1px solid var(--cinza2);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.site-footer {
+  background: #052b15;
+  color: #fff;
+  padding: 20px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  text-align: left;
+}
+
+.site-footer ul li {
+  margin-bottom: 4px;
+}
+
+.site-footer {
+  background: #052b15;
+  color: #fff;
+  padding: 20px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 4px solid #0a7f2e;
+  text-align: left;
+}
+
+.site-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+}
+
+.site-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+  </style>
+<link rel="manifest" href="manifest.json" />
+
+
+</head>
+<body>
+  <div class="topo">
+    <div class="logo-line">
+      <img src="logo-prometheus.png" alt="Logo Prometheus">
+      <span class="brand-name">Cartão AproveitAI</span>
+      <img src="logo-aproveitai.png" alt="Logo AproveitAI">
+    </div>
+    <div class="slogan">Tecnologia com ConsciêncIA gera Resultado.</div>
+    <div class="welcome-box">
+      <b>Bem-vindo à PROMETHEUS EROPRO Soluções Inteligentes!</b><br>
+      Assine e experimente o <b>Cartão AproveitAI</b> e comece a economizar de verdade.
+    </div>
+    <div class="cta-row">
+      <a href="cadastrocliente.html">Quero ser Cliente</a>
+      <a href="areadocliente.html">Área do Cliente</a>      
+      <a href="areadoparceiro.html">Área do Parceiro</a>
+      <a href="cadastroparceiro.html">Quero ser Parceiro</a>
+    </div>
+  </div>
+
+  <main class="container" style="padding: 16px; flex: 1;">
+    <section class="filters" aria-label="Filtros de parceiros" style="background:#fff;border:1px solid var(--cinza2);border-radius:14px;padding:12px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;margin-bottom:20px;">
+      <input id="busca" type="search" placeholder="Buscar por nome ou @..." aria-label="Buscar">
+      <select id="cidade" aria-label="Filtrar por cidade"><option value="">Todas as cidades</option></select>
+      <select id="ramo" aria-label="Filtrar por ramo"><option value="">Todos os ramos</option></select>
+      <button id="btnFiltrar" class="btn" aria-label="Aplicar filtros">Filtrar</button>
+    </section>
+
+    <div id="estado" class="state" role="status" aria-live="polite" style="text-align:center;margin:20px 0;">Carregando...</div>
+    <section id="grid" class="grid" aria-label="Lista de parceiros" hidden
+      style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px"></section>
+    <div class="state" style="text-align:center"><button id="btnMais" class="btn secondary" hidden style="margin:20px auto;padding:10px 20px;border-radius:10px;">Carregar mais</button></div>
+  </main>
+<footer class="site-footer">
+
+  <div style="flex:1;min-width:250px">
+    <strong style="font-size:18px;color:#00ff88">Cartão AproveitAI</strong><br>
+    <div class="mini">PROMETHEUS EROPRO Soluções Inteligentes LTDA</div>
+    <div class="mini">CNPJ: 58.584.332/0001-40</div>
+    <div class="mini">📧 cartao.aproveitai@gmail.com</div>
+    <div class="mini">📱 WhatsApp: (28) 99969-2303</div>
+    <div class="mini">📸 Instagram: @cartao.aproveitai</div>
+    <div class="mini" style="margin-top:6px;opacity:.7">© <span id="yr"></span> AproveitAI. Todos os direitos reservados.</div>
+    <script>document.getElementById('yr')?.append(new Date().getFullYear());</script>
+  </div>
+
+  <div style="flex:1;min-width:200px">
+    <strong style="font-size:16px;color:#00ff88">Links Rápidos</strong>
+<ul>
+  <li><a href="beneficios.html">Benefícios</a></li>
+  <li><a href="promocoes.html">Promoções</a></li>
+  <li><a href="depoimentos.html">Depoimentos</a></li>
+  <li><a href="faq.html">Dúvidas</a></li>
+  <li><a href="privacidade.html">Privacidade</a></li>
+  <li><a href="termos.html">Termos</a></li>
+  <li><a href="excluir.html">Excluir Dados</a></li>
+</ul>
+  </div>
+</footer>
+
+
+<!-- Troque o conteúdo da <script> atual por esse -->
+<script>
+async function fetchJSON(url) {
+  const r = await fetch(url, { headers: { Accept: 'application/json' } });
+  const text = await r.text();
+  if (!r.ok) throw new Error(`HTTP ${r.status}: ${text.slice(0, 200)}`);
+  return JSON.parse(text);
+}
+
+const API_PATH = "/api/gateway?tabela=parceiros";
+const PAGE_SIZE = 12;
+let nextOffset = "";
+let parceiros = [];
+
+const elEstado = document.getElementById('estado'),
+      elGrid = document.getElementById('grid'),
+      elMais = document.getElementById('btnMais'),
+      elBusca = document.getElementById('busca'),
+      elCidade = document.getElementById('cidade'),
+      elRamo = document.getElementById('ramo'),
+      elFiltrar = document.getElementById('btnFiltrar');
+
+elFiltrar.addEventListener('click', aplicarFiltro);
+elMais.addEventListener('click', () => listar(false));
+
+function cardHtml(item) {
+  const logo = item.logoUrl
+    ? `<img src="${item.logoUrl}" alt="Logo de ${item.nome}" style="max-width:80%;max-height:100px;">`
+    : `<img src="logo-aproveitai.png" alt="Logo padrão" style="max-width:80%;max-height:100px;">`;
+
+  const cidadeRamo = [item.ramo, item.cidade].filter(Boolean).join(' • ');
+  const insta = item.instagram ? `<a class="primary" href="${item.instagram}" target="_blank" rel="noopener">Instagram</a>` : '';
+  const zap = item.whatsapp ? `<a href="${item.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>` : '';
+
+  return `<article class="card" style="background:#fff;border:1px solid #ddd;border-radius:16px;overflow:hidden;padding:12px;display:flex;flex-direction:column">
+    <div class="thumb" style="height:140px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #eee">${logo}</div>
+    <div class="content" style="display:flex;flex-direction:column;gap:8px">
+      <h2 style="font-size:16px;margin:0">${item.nome || 'Parceiro'}</h2>
+      <div class="muted" style="color:#555">${cidadeRamo}</div>
+      <div class="actions" style="margin-top:auto;display:flex;gap:8px">${insta}${zap}</div>
+    </div>
+  </article>`;
+}
+
+async function fetchParceiros(offset) {
+  const p = new URLSearchParams();
+  p.set('pageSize', PAGE_SIZE);
+  if (offset) p.set('offset', offset);
+  const fullUrl = `${API_PATH}&${p.toString()}`;
+  const data = await fetchJSON(fullUrl);
+  return {
+    items: (data.records || []).filter(p => {
+  const ativo = String(p.fields.ativo || '').toLowerCase();
+  return ativo === 'sim' || ativo === '✔️' || ativo === 'true' || ativo === '1';
+})
+.map(p => ({
+      nome: p.fields.nome,
+      cidade: p.fields.cidade,
+      ramo: p.fields.ramo,
+      logoUrl: p.fields.logoURL,
+      whatsapp: p.fields.whatsapp,
+      instagram: p.fields.instagram
+    })),
+    nextOffset: data.offset
+  };
+}
+
+async function listar(reset) {
+  try {
+    if (reset) {
+      nextOffset = "";
+      parceiros = [];
+      elGrid.innerHTML = "";
+      elGrid.hidden = true;
+      elMais.hidden = true;
+      elEstado.hidden = false;
+      elEstado.textContent = "Carregando...";
+    }
+
+    const data = await fetchParceiros(nextOffset);
+    const items = data.items || [];
+
+    parceiros.push(...items);
+
+    if (reset && !items.length) {
+      elEstado.textContent = "Nenhum parceiro encontrado.";
+      return;
+    }
+
+    elEstado.hidden = true;
+    elGrid.hidden = false;
+    elGrid.insertAdjacentHTML("beforeend", items.map(cardHtml).join(""));
+    nextOffset = data.nextOffset || "";
+    elMais.hidden = !nextOffset;
+
+    if (reset) popularFiltros(parceiros);
+  } catch (e) {
+    console.error(e);
+    elEstado.hidden = false;
+    elEstado.textContent = "Erro ao carregar. Tente novamente mais tarde.";
+  }
+}
+
+function popularFiltros(lista) {
+  const cidades = new Set();
+  const ramos = new Set();
+  lista.forEach(p => {
+    if (p.cidade) cidades.add(p.cidade);
+    if (p.ramo) ramos.add(p.ramo);
+  });
+
+  elCidade.innerHTML = '<option value="">Todas as cidades</option>' + [...cidades].sort().map(c => `<option value="${c.toLowerCase()}">${c}</option>`).join('');
+  elRamo.innerHTML = '<option value="">Todos os ramos</option>' + [...ramos].sort().map(r => `<option value="${r.toLowerCase()}">${r}</option>`).join('');
+}
+
+function aplicarFiltro() {
+  const termo = elBusca.value.toLowerCase();
+  const cidade = elCidade.value.toLowerCase();
+  const ramo = elRamo.value.toLowerCase();
+
+  const filtrados = parceiros.filter(p =>
+    (!termo || p.nome?.toLowerCase().includes(termo)) &&
+    (!cidade || p.cidade?.toLowerCase() === cidade) &&
+    (!ramo || p.ramo?.toLowerCase() === ramo)
+  );
+
+  elGrid.innerHTML = filtrados.map(cardHtml).join("");
+  elMais.hidden = true;
+
+  if (filtrados.length === 0) {
+    elEstado.hidden = false;
+    elEstado.textContent = "Nenhum parceiro encontrado com os filtros aplicados.";
+  } else {
+    elEstado.hidden = true;
+  }
+}
+
+listar(true);
+</script>
+
+<!-- Consulta silenciosa de outros dados (benefícios, promoções, depoimentos, dúvidas) -->
+<script>
+  if (!localStorage.getItem('cookies_aceitos')) {
+    const aviso = document.createElement('div');
+    aviso.innerHTML = `
+      <div style="position:fixed;bottom:0;left:0;right:0;background:#0a7f2e;color:#fff;padding:10px;text-align:center;z-index:10000">
+        Este site utiliza cookies para melhorar sua experiência.
+        <button onclick="localStorage.setItem('cookies_aceitos', true); this.parentElement.remove();" style="margin-left:10px;background:#fff;color:#0a7f2e;padding:5px 10px;border:none;border-radius:4px;">OK</button>
+      </div>
+    `;
+    document.body.appendChild(aviso);
+  }
+</script>
+
+</body>
+</html>

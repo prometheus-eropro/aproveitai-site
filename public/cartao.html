@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="/manifest.json">
+  <meta charset="UTF-8">
+  <title>Cartão AproveitAI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6fff2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .card {
+      display: flex;
+      justify-content: space-between;
+      padding: 30px;
+      border: 2px dashed #ccc;
+      background-color: white;
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 12px;
+    }
+
+    .left {
+      flex: 1;
+    }
+
+    .right {
+      flex: 1;
+      text-align: right;
+    }
+
+    .logo {
+      max-height: 160px;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .info b {
+      color: #000;
+    }
+
+    .qr-section {
+      margin-top: 10px;
+    }
+
+    .qr-section img {
+      max-width: 100px;
+      height: auto;
+    }
+
+    .contato {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #333;
+      text-align: right;
+    }
+
+    .contato a {
+      color: blue;
+    }
+
+    #voltar-fixo {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #0a7f2e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="left">
+      <img src="logo-aproveitai.png" alt="Logo" class="logo" />
+
+      <div class="info">
+        <p><b>Nome:</b> <span id="nome">-</span></p>
+        <p><b>CPF:</b> <span id="cpf">-</span></p>
+        <p><b>ID Público:</b> <span id="idPublico">-</span></p>
+        <p><b>Grupo:</b> <span id="grupo">-</span></p>
+        <p><b>Cidade:</b> <span id="cidade">-</span></p>
+        <p><b>Data de Cadastro:</b> <span id="dataCadastro">-</span></p>
+      </div>
+    </div>
+
+    <div class="right">
+      <h3>Validação</h3>
+      <div class="qr-section">
+        <img id="qrImg" src="" alt="QR Code" />
+      </div>
+      <div class="contato">
+        <p>Apresente este cartão junto com documento oficial com foto.<br>O parceiro pode exigir identificação.</p>
+        <p>
+          Suporte: (28) 99969-2303<br>
+          Email: cartao.aproveitai@gmail.com<br>
+          Verifique em: <a href="https://www.aproveitai.com.br" target="_blank">www.aproveitai.com.br</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+
+  <script>
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      if (!id) return;
+
+      try {
+        const clienteRes = await fetch('/api/gateway?tabela=clientes');
+        const clienteData = await clienteRes.json();
+
+        const cliente = clienteData.records.find(c => 
+          c.fields.idPublico?.toUpperCase() === id.toUpperCase()
+        );
+
+        if (!cliente) {
+          console.error("Cliente não encontrado.");
+          return;
+        }
+
+        const fields = cliente.fields;
+
+        document.getElementById("nome").textContent = fields.nome || "-";
+        document.getElementById("cpf").textContent = fields.cpf || "-";
+        document.getElementById("idPublico").textContent = fields.idPublico || "-";
+        document.getElementById("grupo").textContent = fields.grupo || "-";
+        document.getElementById("cidade").textContent = fields.cidade || "-";
+        document.getElementById("dataCadastro").textContent = (fields.dataCadastro || "").split("T")[0] || "-";
+
+        console.log("Campos do cliente:", fields);
+
+        // Geração do QR Code
+        const qrImg = document.getElementById("qrImg");
+        if (fields.qrURL && fields.qrURL.startsWith("http")) {
+          qrImg.src = fields.qrURL;
+        } else {
+          const fallbackLink = `${window.location.origin}/cartao.html?id=${encodeURIComponent(id)}`;
+          qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(fallbackLink)}`;
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cliente:", error);
+      }
+    })();
+  </script>
+<div style="text-align: center; margin: 20px;">
+  <button onclick="window.print()" style="padding:12px 20px; background-color:#007a33; color:white; border:none; border-radius:10px; font-weight:bold; font-size:16px; cursor:pointer;">
+    📄 Imprimir / Salvar Cartão
+  </button>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', function () {
+navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+console.log('ServiceWorker registrado com sucesso:', registration.scope);
+}, function (err) {
+console.log('Falha ao registrar ServiceWorker:', err);
+});
+});
+}
+</script>
+</body>
+</html>
