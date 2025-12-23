@@ -6,13 +6,15 @@ export default async function handler(req, res) {
       apiKey: process.env.AIRTABLE_API_KEY,
     }).base(process.env.AIRTABLE_BASE_ID);
 
-    const registros = [];
+    const dados = [];
 
     await base("parceiros")
-      .select({ maxRecords: 100 })
+      .select({
+        view: "Visualização em grade",
+      })
       .eachPage((records, fetchNextPage) => {
         records.forEach((record) => {
-          registros.push({
+          dados.push({
             id: record.id,
             ...record.fields,
           });
@@ -20,12 +22,12 @@ export default async function handler(req, res) {
         fetchNextPage();
       });
 
-    res.status(200).json(registros);
-  } catch (err) {
-    console.error("ERRO AIRTABLE:", err);
+    res.status(200).json(dados);
+  } catch (erro) {
+    console.error("AIRTABLE ERRO:", erro);
     res.status(500).json({
       error: "Erro ao acessar Airtable (parceiros)",
-      detalhe: err.message,
+      detalhe: erro.message,
     });
   }
 }
