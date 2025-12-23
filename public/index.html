@@ -231,7 +231,8 @@ async function fetchJSON(url) {
   return JSON.parse(text);
 }
 
-const API_PATH = "/api/gateway?tabela=parceiros";
+const API_PATH = "/api/parceiros";
+
 const PAGE_SIZE = 12;
 let nextOffset = "";
 let parceiros = [];
@@ -271,12 +272,25 @@ async function fetchParceiros(offset) {
   p.set('pageSize', PAGE_SIZE);
   if (offset) p.set('offset', offset);
   const fullUrl = `${API_PATH}&${p.toString()}`;
-  const data = await fetchJSON(fullUrl);
-  return {
-    items: (data.records || []).filter(p => {
-  const ativo = String(p.fields.ativo || '').toLowerCase();
-  return ativo === 'sim' || ativo === '✔️' || ativo === 'true' || ativo === '1';
-})
+  const data = await fetchJSON(API_PATH);
+
+return {
+  items: data
+    .filter(p => {
+      const ativo = String(p.ativo || p.fields?.ativo || '').toLowerCase();
+      return ativo === 'sim' || ativo === 'true' || ativo === '1' || ativo === '✔️';
+    })
+    .map(p => ({
+      nome: p.nome || p.fields?.nome,
+      cidade: p.cidade || p.fields?.cidade,
+      ramo: p.ramo || p.fields?.ramo,
+      logoUrl: p.logoURL || p.fields?.logoURL,
+      whatsapp: p.whatsapp || p.fields?.whatsapp,
+      instagram: p.instagram || p.fields?.instagram
+    })),
+  nextOffset: null
+};
+
 .map(p => ({
       nome: p.fields.nome,
       cidade: p.fields.cidade,
