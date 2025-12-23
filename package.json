@@ -1,0 +1,25 @@
+{
+  "name": "site-aproveitai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gateway.js",
+  "type": "module",
+  "scripts": {
+    "start": "node gateway.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "airtable": "^0.11.6",
+    "node-fetch": "^3.3.2"
+  }
+}
+{
+  "dependencies": {
+    "airtable": "^0.12.2"
+  }
+}
