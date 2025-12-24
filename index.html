@@ -224,14 +224,14 @@
 </footer>
 
 
-<!-- Troque o conteúdo da <script> atual por esse -->
 <script>
 async function fetchJSON(url) {
-  const r = await fetch(url, { headers: { Accept: 'application/json' } };
+  const r = await fetch(url, { headers: { Accept: 'application/json' } });
   const text = await r.text();
   if (!r.ok) throw new Error(`HTTP ${r.status}: ${text.slice(0, 200)}`);
   return JSON.parse(text);
 }
+</script>
 
 fetch('/api/consulta')
 
@@ -318,7 +318,6 @@ function aplicarFiltro() {
   }
 }
 
-listar(true);
 </script>
 
 <!-- Consulta silenciosa de outros dados (benefícios, promoções, depoimentos, dúvidas) -->
