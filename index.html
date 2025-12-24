@@ -270,50 +270,6 @@ function cardHtml(item) {
   </article>`;
 }
 
-async function fetchParceiros() {
-  const data = await fetchJSON(API_PATH);
-
-  return {
-    items: data
-      .filter(p => {
-        const ativo = String(p.ativo || p.fields?.ativo || '').toLowerCase();
-        return ativo === 'sim' || ativo === 'true' || ativo === '1' || ativo === '✔️';
-      })
-      .map(p => ({
-        nome: p.nome || p.fields?.nome,
-        cidade: p.cidade || p.fields?.cidade,
-        ramo: p.ramo || p.fields?.ramo,
-        logoUrl: p.logoURL || p.fields?.logoURL,
-        whatsapp: p.whatsapp || p.fields?.whatsapp,
-        instagram: p.instagram || p.fields?.instagram
-      })),
-    nextOffset: null
-  };
-}
-
-
-async function listar(reset) {
-  try {
-    if (reset) {
-      nextOffset = "";
-      parceiros = [];
-      elGrid.innerHTML = "";
-      elGrid.hidden = true;
-      elMais.hidden = true;
-      elEstado.hidden = false;
-      elEstado.textContent = "Carregando...";
-    }
-
-    const data = await fetchParceiros(nextOffset);
-    const items = data.items || [];
-
-    parceiros.push(...items);
-
-    if (reset && !items.length) {
-      elEstado.textContent = "Nenhum parceiro encontrado.";
-      return;
-    }
-
     elEstado.hidden = true;
     elGrid.hidden = false;
     elGrid.insertAdjacentHTML("beforeend", items.map(cardHtml).join(""));
