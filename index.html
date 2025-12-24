@@ -162,9 +162,9 @@
 <body>
   <div class="topo">
     <div class="logo-line">
-      <img src="logo-prometheus.png" alt="Logo Prometheus">
+      <img src="logo/logo-prometheus.png">" alt="Logo Prometheus">
       <span class="brand-name">Cartão AproveitAI</span>
-      <img src="logo-aproveitai.png" alt="Logo AproveitAI">
+      <img src="logo/logo-aproveitai.png"> alt="Logo AproveitAI">
     </div>
     <div class="slogan">Tecnologia com ConsciêncIA gera Resultado.</div>
     <div class="welcome-box">
@@ -225,113 +225,84 @@
 
 
 <script>
-async function fetchJSON(url) {
-  const r = await fetch(url, { headers: { Accept: 'application/json' } });
-  const text = await r.text();
-  if (!r.ok) throw new Error(`HTTP ${r.status}: ${text.slice(0, 200)}`);
-  return JSON.parse(text);
-}
-</script>
+const elEstado = document.getElementById('estado');
+const elGrid = document.getElementById('grid');
+const elBusca = document.getElementById('busca');
+const elCidade = document.getElementById('cidade');
+const elRamo = document.getElementById('ramo');
+const elFiltrar = document.getElementById('btnFiltrar');
 
-fetch('/api/consulta')
-
-
-const PAGE_SIZE = 12;
-let nextOffset = "";
 let parceiros = [];
 
-const elEstado = document.getElementById('estado'),
-      elGrid = document.getElementById('grid'),
-      elMais = document.getElementById('btnMais'),
-      elBusca = document.getElementById('busca'),
-      elCidade = document.getElementById('cidade'),
-      elRamo = document.getElementById('ramo'),
-      elFiltrar = document.getElementById('btnFiltrar');
+async function carregarParceiros() {
+  try {
+    const res = await fetch('/api/consulta');
+    if (!res.ok) throw new Error('Erro API');
 
-elFiltrar.addEventListener('click', aplicarFiltro);
-elMais.addEventListener('click', () => listar(false));
+    parceiros = await res.json();
+
+    popularFiltros(parceiros);
+    renderizar(parceiros);
+  } catch (e) {
+    console.error(e);
+    elEstado.textContent = 'Erro ao carregar. Tente novamente mais tarde.';
+    elEstado.hidden = false;
+  }
+}
+
+function renderizar(lista) {
+  if (!lista.length) {
+    elEstado.textContent = 'Nenhum parceiro encontrado.';
+    elEstado.hidden = false;
+    return;
+  }
+
+  elEstado.hidden = true;
+  elGrid.hidden = false;
+  elGrid.innerHTML = lista.map(cardHtml).join('');
+}
 
 function cardHtml(item) {
   const logo = item.logoUrl
-    ? `<img src="${item.logoUrl}" alt="Logo de ${item.nome}" style="max-width:80%;max-height:100px;">`
-    : `<img src="logo-aproveitai.png" alt="Logo padrão" style="max-width:80%;max-height:100px;">`;
+    ? `<img src="${item.logoUrl}" style="max-width:80%;max-height:100px">`
+    : `<img src="logo/logo-aproveitai.png" style="max-width:80%;max-height:100px">`;
 
-  const cidadeRamo = [item.ramo, item.cidade].filter(Boolean).join(' • ');
-  const insta = item.instagram ? `<a class="primary" href="${item.instagram}" target="_blank" rel="noopener">Instagram</a>` : '';
-  const zap = item.whatsapp ? `<a href="${item.whatsapp}" target="_blank" rel="noopener">WhatsApp</a>` : '';
-
-  return `<article class="card" style="background:#fff;border:1px solid #ddd;border-radius:16px;overflow:hidden;padding:12px;display:flex;flex-direction:column">
-    <div class="thumb" style="height:140px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #eee">${logo}</div>
-    <div class="content" style="display:flex;flex-direction:column;gap:8px">
-      <h2 style="font-size:16px;margin:0">${item.nome || 'Parceiro'}</h2>
-      <div class="muted" style="color:#555">${cidadeRamo}</div>
-      <div class="actions" style="margin-top:auto;display:flex;gap:8px">${insta}${zap}</div>
-    </div>
-  </article>`;
-}
-
-    elEstado.hidden = true;
-    elGrid.hidden = false;
-    elGrid.insertAdjacentHTML("beforeend", items.map(cardHtml).join(""));
-    nextOffset = data.nextOffset || "";
-    elMais.hidden = !nextOffset;
-
-    if (reset) popularFiltros(parceiros);
-  } catch (e) {
-    console.error(e);
-    elEstado.hidden = false;
-    elEstado.textContent = "Erro ao carregar. Tente novamente mais tarde.";
-  }
+  return `
+    <article style="background:#fff;border:1px solid #ddd;border-radius:16px;padding:12px">
+      <div style="height:120px;display:flex;align-items:center;justify-content:center">${logo}</div>
+      <h3>${item.nome || 'Parceiro'}</h3>
+      <p>${item.ramo || ''} ${item.cidade ? '• ' + item.cidade : ''}</p>
+      ${item.whatsapp ? `<a href="${item.whatsapp}" target="_blank">WhatsApp</a>` : ''}
+    </article>
+  `;
 }
 
 function popularFiltros(lista) {
-  const cidades = new Set();
-  const ramos = new Set();
-  lista.forEach(p => {
-    if (p.cidade) cidades.add(p.cidade);
-    if (p.ramo) ramos.add(p.ramo);
-  });
+  const cidades = [...new Set(lista.map(p => p.cidade).filter(Boolean))];
+  const ramos = [...new Set(lista.map(p => p.ramo).filter(Boolean))];
 
-  elCidade.innerHTML = '<option value="">Todas as cidades</option>' + [...cidades].sort().map(c => `<option value="${c.toLowerCase()}">${c}</option>`).join('');
-  elRamo.innerHTML = '<option value="">Todos os ramos</option>' + [...ramos].sort().map(r => `<option value="${r.toLowerCase()}">${r}</option>`).join('');
+  elCidade.innerHTML = '<option value="">Todas as cidades</option>' +
+    cidades.map(c => `<option value="${c}">${c}</option>`).join('');
+
+  elRamo.innerHTML = '<option value="">Todos os ramos</option>' +
+    ramos.map(r => `<option value="${r}">${r}</option>`).join('');
 }
 
-function aplicarFiltro() {
+elFiltrar.addEventListener('click', () => {
   const termo = elBusca.value.toLowerCase();
-  const cidade = elCidade.value.toLowerCase();
-  const ramo = elRamo.value.toLowerCase();
+  const cidade = elCidade.value;
+  const ramo = elRamo.value;
 
   const filtrados = parceiros.filter(p =>
     (!termo || p.nome?.toLowerCase().includes(termo)) &&
-    (!cidade || p.cidade?.toLowerCase() === cidade) &&
-    (!ramo || p.ramo?.toLowerCase() === ramo)
+    (!cidade || p.cidade === cidade) &&
+    (!ramo || p.ramo === ramo)
   );
 
-  elGrid.innerHTML = filtrados.map(cardHtml).join("");
-  elMais.hidden = true;
+  renderizar(filtrados);
+});
 
-  if (filtrados.length === 0) {
-    elEstado.hidden = false;
-    elEstado.textContent = "Nenhum parceiro encontrado com os filtros aplicados.";
-  } else {
-    elEstado.hidden = true;
-  }
-}
-
-</script>
-
-<!-- Consulta silenciosa de outros dados (benefícios, promoções, depoimentos, dúvidas) -->
-<script>
-  if (!localStorage.getItem('cookies_aceitos')) {
-    const aviso = document.createElement('div');
-    aviso.innerHTML = `
-      <div style="position:fixed;bottom:0;left:0;right:0;background:#0a7f2e;color:#fff;padding:10px;text-align:center;z-index:10000">
-        Este site utiliza cookies para melhorar sua experiência.
-        <button onclick="localStorage.setItem('cookies_aceitos', true); this.parentElement.remove();" style="margin-left:10px;background:#fff;color:#0a7f2e;padding:5px 10px;border:none;border-radius:4px;">OK</button>
-      </div>
-    `;
-    document.body.appendChild(aviso);
-  }
+carregarParceiros();
 </script>
 
 </body>
