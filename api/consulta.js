@@ -210,6 +210,24 @@ export default async function handler(req, res) {
 
       return res.status(200).json({ consultas });
     }
+if (tipo === "listarParceiros") {
+  const url = `https://api.airtable.com/v0/${baseId}/${tabelaParceiros}`;
+  const resp = await fetch(url, {
+    headers: { Authorization: `Bearer ${apiKey}` }
+  });
+
+  const dados = await resp.json();
+
+  const parceiros = (dados.records || []).map(r => ({
+    nome: r.fields.nome || "",
+    cidade: r.fields.cidade || "",
+    ramo: r.fields.ramo || "",
+    whatsapp: r.fields.whatsapp || "",
+    logoUrl: r.fields.logo?.[0]?.url || ""
+  }));
+
+  return res.status(200).json(parceiros);
+}
 
     return res.status(400).json({ erro: "Tipo de operação não reconhecido." });
   } catch (err) {
