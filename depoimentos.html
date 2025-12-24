@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="/manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Depoimentos | Cartão AproveitAI</title>
+  <style>
+
+#voltar-fixo {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #0a7f2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  z-index: 999;
+}
+
+
+body, html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.wrap {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #bdeeff, #81d4fa);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 30px;
+      background: white;
+    }
+    header img {
+      height: 100px;
+    }
+    h1 {
+      text-align: center;
+      color: #232630;
+      margin: 10px 0;
+      font-size: 2.2rem;
+    }
+    .content {
+      background: white;
+      border-radius: 16px;
+      margin: 20px auto;
+      padding: 30px;
+      max-width: 850px;
+    }
+    h2 {
+      color: green;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+    .depoimento {
+      background: #fffde7;
+      padding: 20px;
+      border-left: 4px solid #4caf50;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+    .depoimento .texto {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .depoimento .autor {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo-prometheus.png" alt="Logo Prometheus" />
+    <h1>Cartão AproveitAI</h1>
+    <img src="logo-aproveitai.png" alt="Logo AproveitAI" />
+  </header>
+
+  <div class="content">
+    <h2>Depoimentos</h2>
+    <div id="depoimentos-container"></div>
+  </div>
+
+  <script>
+fetch("/api/gateway?tabela=depoimentos")
+
+
+  .then(response => response.json())
+  .then(data => {
+    const container = document.getElementById('depoimentos-container');
+    data.records.forEach(record => {
+  const { texto, autor, ativo } = record.fields || {};
+
+      if (texto && ativo === 'sim') {
+        const div = document.createElement('div');
+        div.className = 'depoimento';
+        div.innerHTML = `
+          <div class="texto">"${texto}"</div>
+          ${autor ? `<div class="autor">- ${autor}</div>` : ''}
+        `;
+        container.appendChild(div);
+      }
+    });
+  })
+  .catch(error => console.error('Erro ao buscar dados:', error));
+  </script>
+<button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+
+</body>
+</html>

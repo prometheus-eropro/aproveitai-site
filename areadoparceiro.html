@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Entrada do Parceiro • AproveitAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+
+#voltar-fixo {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #0a7f2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  z-index: 999;
+}
+
+
+body, html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.wrap {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+    :root {
+      --verde:#0a7f2e; --azul:#3e6bee; --ink:#232630;
+      --bg1:#bdeeff; --bg2:#81d4fa; --card:#fff;
+    }
+    body {
+      margin: 0; font-family: system-ui, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--ink);
+    }
+    .brandline {
+      display: grid; grid-template-columns:140px 1fr 140px; gap: 12px;
+      align-items: center; justify-items: center;
+      margin: 18px auto 0; max-width: 600px;
+    }
+    .brandline img { height: 100px; object-fit: contain; }
+    .pill {
+      background: #e9fff1; border: 1px solid #b7efc2; color: #0a4c1a;
+      border-radius: 999px; padding: 12px 20px; font-weight: 900;
+      font-size: 1.6rem; text-align: center;
+    }
+    .wrap {
+      max-width: 400px; margin: auto; padding: 24px;
+    }
+    .card {
+      background: var(--card); border-radius: 14px;
+      box-shadow: 0 6px 22px #0001; padding: 24px;
+      text-align: center;
+    }
+    label { display: block; margin-top: 12px; font-weight: 600; text-align: left; }
+    input {
+      width: 100%; padding: 10px; margin-top: 6px;
+      border-radius: 6px; border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 16px; padding: 10px 20px;
+      background: var(--verde); color: #fff;
+      border: 0; border-radius: 8px;
+      font-weight: 700; cursor: pointer;
+      width: 100%;
+    }
+
+@media (max-width: 480px) {
+  #voltar-fixo {
+    padding: 8px 16px;
+    font-size: 14px;
+    bottom: 15px;
+    left: 15px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="brandline">
+    <img src="logo-prometheus.png" alt="Prometheus" />
+    <div class="pill">Cartão AproveitAI</div>
+    <img src="logo-aproveitai.png" alt="AproveitAI" />
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>Acesse o Painel do Parceiro</h2>
+      <label>CNPJ</label>
+      <input type="text" id="cnpj" placeholder="Digite seu CNPJ" />
+
+<label for="token">Token</label>
+<div style="position: relative; display: flex; align-items: center;">
+  <input 
+    type="password" 
+    id="token" 
+    placeholder="Digite seu Token" 
+    required 
+    style="flex: 1; padding-right: 40px;"
+  />
+  <span 
+    id="toggleToken" 
+    style="position: absolute; right: 10px; cursor: pointer; font-size: 18px;">
+    👁
+  </span>
+</div>
+
+
+      <button onclick="entrarPainel()">Entrar</button>
+    </div>
+  </div>
+<div id="acessoNegado" style="display: none; padding: 20px; text-align: center;">
+  <h2>Acesso negado</h2>
+  <p>Seu acesso ainda não está liberado. Para ativar seu painel, entre em contato via WhatsApp.</p>
+  <a href="https://wa.me/5528999692303?text=Olá,%20quero%20acesso%20ao%20painel" target="_blank" style="text-decoration:none;color:white;">
+    <button style="background-color:#25D366;color:white;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;">
+      Falar com Suporte no WhatsApp
+    </button>
+  </a>
+  </div>
+</div>
+
+<script>
+function sanitizeCNPJ(v){ return (v||"").replace(/\D/g,""); }
+
+  async function buscarParceiro(cnpj, token) {
+    const resp = await fetch("/api/consulta", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tipo: "parceirosLogin",
+        cnpj: cnpj.replace(/\D/g, ""),
+        token: token.trim(),
+      }),
+    });
+
+    if (!resp.ok) {
+      if (resp.status === 401) return null;
+      if (resp.status === 423) return "inativo";
+      throw new Error("Falha no servidor");
+    }
+
+    return await resp.json();
+  }
+
+async function entrarPainel() {
+  const btn = document.querySelector('button[onclick="entrarPainel()"]');
+  const cnpj = document.getElementById('cnpj').value;
+  const token = document.getElementById('token').value;
+
+  const cnpjNum = sanitizeCNPJ(cnpj);
+  if (!cnpjNum || cnpjNum.length !== 14 || !token) {
+    alert('Preencha CNPJ (14 dígitos) e token.');
+    return;
+  }
+
+  const textoOriginal = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Validando...';
+
+  try {
+    const resp = await buscarParceiro(cnpjNum, token);
+
+if (!resp) {
+  alert("CNPJ ou Token inválidos.");
+  return;
+}
+if (resp === "inativo") {
+  alert("Este parceiro está inativo. Acesso negado.");
+  return;
+}
+
+const parceiro = resp.parceiro; // 👈 agora sim acessa o objeto correto
+
+// se o backend não mandou cnpj/nome, usa o que foi digitado
+const parceiroCNPJ = parceiro?.cnpj || cnpjNum;
+const parceiroNome = parceiro?.nome || "NAO_INFORMADO";
+
+// salva no sessionStorage
+sessionStorage.setItem("cnpjParceiro", parceiroCNPJ);
+sessionStorage.setItem("nomeParceiro", parceiroNome);
+sessionStorage.setItem("whatsapp", parceiro.whatsapp || "");
+sessionStorage.setItem("instagram", parceiro.instagram || "");
+
+// salva no localStorage
+localStorage.setItem("parceiro", JSON.stringify({
+  cnpj: parceiroCNPJ,
+  nome: parceiroNome
+}));
+localStorage.setItem("parceiroCNPJ", parceiroCNPJ);
+localStorage.setItem("parceiroNome", parceiroNome);
+
+window.location.href = "paineldoparceiro.html";
+  } catch (e) {
+    console.error(e);
+    alert("Erro ao validar parceiro. Tente novamente.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+} // <-- fecha a função entrarPainel
+</script>
+<script>
+  document.getElementById("toggleToken").addEventListener("click", function () {
+    const tokenInput = document.getElementById("token");
+    if (tokenInput.type === "password") {
+      tokenInput.type = "text"; // mostra o token
+    } else {
+      tokenInput.type = "password"; // oculta o token
+    }
+  });
+</script>
+
+<button id="voltar-fixo" onclick="window.history.back()">⬅️ Voltar</button>
+</body>
+</html>
